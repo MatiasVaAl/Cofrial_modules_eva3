@@ -1,0 +1,20 @@
+services:
+  simulator:
+    build: .
+    image: cofrial-iot-simulator:lab
+    restart: "no"
+    environment:
+      SIM_MODE: check
+    extra_hosts:
+      - "odoo.cofrial-odoo.dns.army=10.0.1.217"
+    secrets:
+      - odoo_api_key
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+secrets:
+  odoo_api_key:
+    file: ./secrets/odoo_api_key

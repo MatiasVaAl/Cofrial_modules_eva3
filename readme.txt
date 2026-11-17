@@ -1,0 +1,1 @@
+Cofrial-iot es el simulador de envió de datos de los camiones como la temperatura, gps y gasolina
