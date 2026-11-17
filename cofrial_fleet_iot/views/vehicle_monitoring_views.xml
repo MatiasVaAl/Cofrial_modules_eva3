@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_fleet_vehicle_form_monitoring"
+            model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.monitoring</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id"
+               ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="inside">
+                <page name="cofrial_monitoring"
+                      string="Monitoreo de Flota">
+
+                    <group>
+                        <group string="Seguimiento del vehículo">
+                            <field name="iot_monitor_enabled"/>
+                            <field name="iot_temp_monitor_enabled"
+                                   readonly="not iot_monitor_enabled"/>
+                        </group>
+
+                        <group string="Límites de temperatura"
+                               invisible="not iot_monitor_enabled or not iot_temp_monitor_enabled">
+                            <field name="iot_temp_min"/>
+                            <field name="iot_temp_max"/>
+                        </group>
+                    </group>
+
+                    <separator string="Mediciones recientes"/>
+
+                    <field name="iot_reading_ids"
+                           nolabel="1"
+                           readonly="1">
+                        <list string="Últimas mediciones"
+                              create="0"
+                              edit="0"
+                              delete="0"
+                              limit="5"
+                              default_order="fecha_lectura desc, id desc">
+                            <field name="fecha_lectura"/>
+                            <field name="temp_display"/>
+                            <field name="combustible_pct"/>
+                            <field name="alerta_ruptura_frio"/>
+                        </list>
+                    </field>
+
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

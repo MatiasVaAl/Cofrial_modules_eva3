@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="cofrial_bi.Dashboard">
+        <div class="o_cofrial_bi container-fluid p-4" style="height: 100%; min-height: 0; overflow-y: auto;">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">Cofrial - Inteligencia de Negocios</h2>
+                    <p class="text-muted mb-0">
+                        Ventas, CRM y cadena de frío
+                    </p>
+                </div>
+                <button class="btn btn-outline-primary"
+                        type="button"
+                        t-att-disabled="state.loading"
+                        t-on-click="refresh">
+                    Actualizar indicadores
+                </button>
+            </div>
+
+            <!-- Filtros comerciales -->
+            <div class="card mb-4 o_cofrial_bi_sales_filter">
+                <div class="card-body">
+                    <h5 class="mb-2">
+                        Filtros de análisis comercial
+                    </h5>
+
+                    <p class="text-muted small">
+                        Aplican a ventas, pedidos y cotizaciones.
+                        CRM e IoT mantienen sus indicadores generales.
+                    </p>
+
+                    <div class="row g-3 align-items-end">
+
+                        <div class="col-lg-4 col-md-6">
+                            <label class="form-label"
+                                   for="cofrial_bi_period">
+                                Período de ventas
+                            </label>
+
+                            <select id="cofrial_bi_period"
+                                    class="form-select"
+                                    t-on-change="onPeriodChange">
+
+                                <option value="all">
+                                    Todo el historial
+                                </option>
+
+                                <option value="last_7_days">
+                                    Últimos 7 días
+                                </option>
+
+                                <option value="last_30_days">
+                                    Últimos 30 días
+                                </option>
+
+                                <option value="current_month">
+                                    Mes actual
+                                </option>
+
+                                <option value="current_year">
+                                    Año actual
+                                </option>
+
+                                <option value="custom">
+                                    Rango personalizado
+                                </option>
+                            </select>
+                        </div>
+
+                        <t t-if="state.period === 'custom'">
+
+                            <div class="col-lg-3 col-md-6">
+                                <label class="form-label"
+                                       for="cofrial_bi_from">
+                                    Fecha inicial
+                                </label>
+
+                                <input id="cofrial_bi_from"
+                                       type="date"
+                                       class="form-control"
+                                       t-att-value="state.dateFrom"
+                                       t-on-change="onDateFromChange"/>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6">
+                                <label class="form-label"
+                                       for="cofrial_bi_to">
+                                    Fecha final
+                                </label>
+
+                                <input id="cofrial_bi_to"
+                                       type="date"
+                                       class="form-control"
+                                       t-att-value="state.dateTo"
+                                       t-on-change="onDateToChange"/>
+                            </div>
+
+                        </t>
+
+                        <div class="col-lg-2 col-md-6">
+                            <button type="button"
+                                    class="btn btn-primary w-100"
+                                    t-att-disabled="state.loading"
+                                    t-on-click="applyFilters">
+                                Aplicar
+                            </button>
+                        </div>
+                    </div>
+
+                    <t t-if="state.filterError">
+                        <div class="alert alert-warning mt-3 mb-0">
+                            <t t-esc="state.filterError"/>
+                        </div>
+                    </t>
+
+                    <div class="mt-3 small text-muted">
+                        Período comercial aplicado:
+                        <strong>
+                            <t t-esc="appliedPeriodLabel"/>
+                        </strong>
+                    </div>
+                </div>
+            </div>
+
+            <t t-if="state.error">
+                <div class="alert alert-danger">
+                    <t t-esc="state.error"/>
+                </div>
+            </t>
+
+            <t t-if="!state.data">
+                <p>Cargando indicadores...</p>
+            </t>
+
+            <t t-else="">
+                <div class="row g-3 mb-4">
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="text-muted">Ventas netas</div>
+                                <h3>
+                                    <t t-esc="formatCLP(state.data.sales.net)"/>
+                                </h3>
+                                <small>Pedidos confirmados, sin impuestos</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="text-muted">Pedidos confirmados</div>
+                                <h3>
+                                    <t t-esc="state.data.sales.confirmed_orders"/>
+                                </h3>
+                                <small>
+                                    Cotizaciones:
+                                    <t t-esc="state.data.sales.quotations"/>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="text-muted">Oportunidades CRM</div>
+                                <h3>
+                                    <t t-esc="state.data.crm.opportunities"/>
+                                </h3>
+                                <small>
+                                    Valor esperado:
+                                    <t t-esc="formatCLP(state.data.crm.expected_revenue)"/>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="text-muted">Alertas térmicas activas</div>
+                                <h3>
+                                    <t t-esc="state.data.iot.current_alerts"/>
+                                </h3>
+                                <small>Estado actual de vehículos</small>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-xl-7">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5>Ventas netas por mes</h5>
+                                <p class="text-muted">
+                                    Agrupadas por fecha de pedido
+                                </p>
+
+                                <t t-if="!months.length">
+                                    <p>Sin ventas confirmadas.</p>
+                                </t>
+
+                                <t t-foreach="months"
+                                   t-as="month"
+                                   t-key="month.month">
+
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <strong>
+                                                <t t-esc="month.month"/>
+                                            </strong>
+                                            <span>
+                                                <t t-esc="formatCLP(month.net)"/>
+                                            </span>
+                                        </div>
+                                        <div class="progress">
+                                            <div class="progress-bar"
+                                                 t-att-style="barStyle(month.net)"/>
+                                        </div>
+                                    </div>
+
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-5">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5>Ventas por canal</h5>
+
+                                <hr/>
+
+                                <div class="d-flex justify-content-between">
+                                    <span>E-commerce</span>
+                                    <strong>
+                                        <t t-esc="formatCLP(state.data.sales.channels.web.net)"/>
+                                    </strong>
+                                </div>
+                                <p class="text-muted">
+                                    <t t-esc="state.data.sales.channels.web.orders"/>
+                                    pedidos confirmados
+                                </p>
+
+                                <hr/>
+
+                                <div class="d-flex justify-content-between">
+                                    <span>Venta interna</span>
+                                    <strong>
+                                        <t t-esc="formatCLP(state.data.sales.channels.internal.net)"/>
+                                    </strong>
+                                </div>
+                                <p class="text-muted">
+                                    <t t-esc="state.data.sales.channels.internal.orders"/>
+                                    pedidos confirmados
+                                </p>
+
+                                <hr/>
+
+                                <div class="d-flex justify-content-between">
+                                    <span>Total con impuestos</span>
+                                    <strong>
+                                        <t t-esc="formatCLP(state.data.sales.total)"/>
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Analisis de ventas diarias -->
+                <div class="card mb-3 o_cofrial_bi_daily_sales">
+                    <div class="card-body">
+
+                        <h5 class="mb-1">
+                            Ventas netas por día
+                        </h5>
+
+                        <p class="text-muted small">
+                            Pedidos confirmados agrupados por fecha local.
+                            Se aplica el período comercial seleccionado.
+                        </p>
+
+                        <t t-if="!days.length">
+                            <p class="text-muted mb-0">
+                                Sin ventas confirmadas en el período seleccionado.
+                            </p>
+                        </t>
+
+                        <t t-foreach="days"
+                           t-as="day"
+                           t-key="day.date">
+
+                            <div class="mb-3">
+
+                                <div class="d-flex justify-content-between
+                                            align-items-center mb-1">
+
+                                    <strong>
+                                        <t t-esc="day.date"/>
+                                    </strong>
+
+                                    <span>
+                                        <t t-esc="formatCLP(day.net)"/>
+                                        -
+                                        <t t-esc="day.orders"/>
+                                        pedidos
+                                    </span>
+
+                                </div>
+
+                                <div class="progress"
+                                     style="height: 16px;">
+
+                                    <div class="progress-bar"
+                                         role="progressbar"
+                                         t-att-style="dayBarStyle(day.net)"
+                                         t-att-aria-label="'Ventas del ' + day.date">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </t>
+
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5>Monitoreo de cadena de frío</h5>
+
+                        <div class="row g-3 mt-1 text-center">
+                            <div class="col-md-3">
+                                <h3>
+                                    <t t-esc="state.data.iot.monitored_vehicles"/>
+                                </h3>
+                                <span>Vehículos monitoreados</span>
+                            </div>
+
+                            <div class="col-md-3">
+                                <h3>
+                                    <t t-esc="state.data.iot.readings"/>
+                                </h3>
+                                <span>Lecturas IoT</span>
+                            </div>
+
+                            <div class="col-md-3">
+                                <h3>
+                                    <t t-esc="state.data.iot.historical_alerts"/>
+                                </h3>
+                                <span>Lecturas con alerta histórica</span>
+                            </div>
+
+                            <div class="col-md-3">
+                                <h3>
+                                    <t t-esc="state.data.iot.current_alerts"/>
+                                </h3>
+                                <span>Alertas actuales</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <small class="text-muted">
+                    Última consulta:
+                    <t t-esc="state.data.updated_at"/>
+                    UTC. Actualización automática cada 30 segundos.
+                </small>
+
+            </t>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cofrial_ai_category_user,cofrial.ai.category.user,model_cofrial_ai_category,base.group_user,1,0,0,0

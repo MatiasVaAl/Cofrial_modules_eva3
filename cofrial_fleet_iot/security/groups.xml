@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="group_iot_ingest" model="res.groups">
+        <field name="name">Cofrial IoT - Ingesta por API</field>
+        <field name="comment">Usuario tecnico para registrar lecturas simuladas de la flota.</field>
+    </record>
+</odoo>

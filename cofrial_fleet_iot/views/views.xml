@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_iot_reading_list" model="ir.ui.view">
+        <field name="name">cofrial.iot.reading.list</field>
+        <field name="model">cofrial.iot.reading</field>
+        <field name="arch" type="xml">
+            <list string="Historial de Mediciones"
+                  decoration-danger="alerta_ruptura_frio"
+                  delete="0">
+                <field name="fecha_lectura"/>
+                <field name="vehicle_id"/>
+                <field name="temp_display"/>
+                <field name="combustible_display"/>
+                <field name="alerta_ruptura_frio"/>
+                <field name="origen"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_iot_reading_form" model="ir.ui.view">
+        <field name="name">cofrial.iot.reading.form</field>
+        <field name="model">cofrial.iot.reading</field>
+        <field name="arch" type="xml">
+            <form string="Lectura IoT" delete="0">
+                <sheet>
+                    <group>
+                        <group string="Vehiculo y medicion">
+                            <field name="vehicle_id"/>
+                            <field name="fecha_lectura"/>
+                            <field name="origen"/>
+                            <field name="temp_monitored"/>
+                            <field name="temp_camara"
+                                   invisible="not temp_monitored"/>
+                            <field name="combustible_pct"/>
+                            <field name="alerta_ruptura_frio"/>
+                        </group>
+                        <group string="Control y ubicacion">
+                            <field name="temp_min"/>
+                            <field name="temp_max"/>
+                            <field name="lat"/>
+                            <field name="long"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_iot_reading_search" model="ir.ui.view">
+        <field name="name">cofrial.iot.reading.search</field>
+        <field name="model">cofrial.iot.reading</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="vehicle_id"/>
+                <field name="fecha_lectura"/>
+                <filter name="solo_alertas"
+                        string="Alertas termicas"
+                        domain="[('alerta_ruptura_frio', '=', True)]"/>
+                <group>
+                    <filter name="grupo_camion"
+                            string="Camion"
+                            context="{'group_by': 'vehicle_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_iot_readings" model="ir.actions.act_window">
+        <field name="name">Historial de Mediciones</field>
+        <field name="res_model">cofrial.iot.reading</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_grupo_camion': 1}</field>
+    </record>
+
+    <menuitem id="menu_iot_readings"
+              name="Historial de Mediciones"
+              parent="fleet.fleet_vehicles"
+              action="action_iot_readings"
+              groups="fleet.fleet_group_user"
+              sequence="30"/>
+
+</odoo>

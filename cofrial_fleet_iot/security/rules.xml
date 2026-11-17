@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="rule_iot_company" model="ir.rule">
+        <field name="name">IoT: acceso por empresa</field>
+        <field name="model_id" ref="model_cofrial_iot_reading"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">
+            [('company_id', 'in', company_ids + [False])]
+        </field>
+    </record>
+</odoo>

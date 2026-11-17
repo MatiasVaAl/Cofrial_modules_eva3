@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_iot_reading_user,IoT Reading User,model_cofrial_iot_reading,fleet.fleet_group_user,1,0,0,0
+access_iot_reading_manager,IoT Reading Manager,model_cofrial_iot_reading,fleet.fleet_group_manager,1,1,1,0
+access_iot_api_reading,IoT API Reading,model_cofrial_iot_reading,cofrial_fleet_iot.group_iot_ingest,1,0,1,0
+access_iot_api_vehicle,IoT API Vehicle,fleet.model_fleet_vehicle,cofrial_fleet_iot.group_iot_ingest,1,0,0,0
+access_iot_config_admin,IoT Configuration Admin,model_cofrial_iot_simulator_config,base.group_system,1,1,0,0
+access_iot_config_api,IoT Configuration API,model_cofrial_iot_simulator_config,cofrial_fleet_iot.group_iot_ingest,1,0,0,0

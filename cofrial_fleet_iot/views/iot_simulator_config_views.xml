@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_iot_simulator_config_form"
+            model="ir.ui.view">
+        <field name="name">cofrial.iot.simulator.config.form</field>
+        <field name="model">cofrial.iot.simulator.config</field>
+        <field name="arch" type="xml">
+            <form string="Configuracion del simulador IoT"
+                  create="false"
+                  delete="false">
+                <sheet>
+                    <group string="Simulacion de flota">
+                        <field name="name" invisible="1"/>
+                        <field name="enabled"/>
+                        <label for="interval_number"/>
+                        <div class="o_row" style="max-width: 320px;">
+                            <field name="interval_number" class="oe_inline" nolabel="1"/>
+                            <field name="interval_type" class="oe_inline" nolabel="1"/>
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_iot_simulator_config"
+            model="ir.actions.act_window">
+        <field name="name">Configuracion del simulador IoT</field>
+        <field name="res_model">cofrial.iot.simulator.config</field>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+               ref="view_iot_simulator_config_form"/>
+        <field name="res_id"
+               eval="ref('cofrial_fleet_iot.iot_simulator_config_default')"/>
+    </record>
+
+    <menuitem id="menu_iot_simulator_config"
+              name="Configuracion del simulador IoT"
+              parent="fleet.fleet_vehicles"
+              action="action_iot_simulator_config"
+              groups="base.group_system"
+              sequence="30"/>
+</odoo>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_crm_lead_form_cofrial_ai"
+            model="ir.ui.view">
+
+        <field name="name">crm.lead.form.cofrial.ai</field>
+        <field name="model">crm.lead</field>
+
+        <field name="inherit_id"
+               ref="crm.crm_lead_view_form"/>
+
+        <field name="arch" type="xml">
+
+            <xpath expr="//notebook" position="inside">
+
+                <page name="cofrial_ai_page"
+                      string="Clasificación IA">
+
+                    <group>
+                        <field name="x_categoria_ia_id"
+                               options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+
+                    <group>
+                        <button
+                            name="action_cofrial_ai_classify"
+                            type="object"
+                            string="Clasificar con IA"
+                            class="btn-primary"
+                            confirm="Se enviara la descripcion de esta oportunidad a Google Gemini. Utilice solo datos de prueba sin informacion sensible. Desea continuar?"/>
+                    </group>
+
+                </page>
+
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

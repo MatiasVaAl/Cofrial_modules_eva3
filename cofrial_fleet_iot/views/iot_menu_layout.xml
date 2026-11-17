@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem id="menu_iot_root"
+              name="Monitoreo de Flota"
+              parent="fleet.menu_root"
+              groups="fleet.fleet_group_user"
+              sequence="3"/>
+
+    <record id="menu_iot_readings" model="ir.ui.menu">
+        <field name="parent_id" ref="menu_iot_root"/>
+        <field name="sequence" eval="10"/>
+    </record>
+
+    <record id="menu_vehicle_iot_dashboard" model="ir.ui.menu">
+        <field name="parent_id" ref="menu_iot_root"/>
+        <field name="sequence" eval="20"/>
+    </record>
+
+    <record id="menu_iot_simulator_config" model="ir.ui.menu">
+        <field name="parent_id" ref="fleet.fleet_configuration"/>
+        <field name="sequence" eval="90"/>
+    </record>
+</odoo>

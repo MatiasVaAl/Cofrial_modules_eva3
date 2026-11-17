@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_vehicle_iot_kanban" model="ir.ui.view">
+        <field name="name">fleet.vehicle.iot.kanban</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <kanban create="false" can_open="true" js_class="cofrial_iot_autorefresh">
+                <field name="display_name"/>
+                <field name="iot_monitor_enabled"/>
+                <field name="iot_temp_monitor_enabled"/>
+                <field name="iot_temp_min"/>
+                <field name="iot_temp_max"/>
+                <field name="iot_last_has_temp"/>
+                <field name="iot_has_reading"/>
+                <field name="iot_last_alert"/>
+                <field name="iot_last_temp"/>
+                <field name="iot_last_fuel"/>
+                <field name="iot_last_datetime"/>
+                <field name="iot_last_lat"/>
+                <field name="iot_last_long"/>
+
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+                            <strong style="min-width: 0; overflow-wrap: anywhere;">
+                                <field name="display_name"/>
+                            </strong>
+
+                            <span t-if="!record.iot_has_reading.raw_value"
+                                  class="badge text-bg-secondary flex-shrink-0 text-nowrap">
+                                Sin lecturas
+                            </span>
+                            <span t-elif="!record.iot_temp_monitor_enabled.raw_value"
+                                  class="badge text-bg-info flex-shrink-0 text-nowrap">
+                                Monitoreo basico
+                            </span>
+                            <span t-elif="!record.iot_last_has_temp.raw_value"
+                                  class="badge text-bg-secondary flex-shrink-0 text-nowrap">
+                                Sin temperatura
+                            </span>
+                            <span t-elif="record.iot_last_alert.raw_value"
+                                  class="badge text-bg-danger flex-shrink-0 text-nowrap">
+                                Alerta termica
+                            </span>
+                            <span t-else=""
+                                  class="badge text-bg-success flex-shrink-0 text-nowrap">
+                                Normal
+                            </span>
+                        </div>
+
+                        <div t-if="record.iot_has_reading.raw_value">
+                            <div t-if="record.iot_temp_monitor_enabled.raw_value and record.iot_last_has_temp.raw_value"
+                                 class="mb-2">
+                                <strong>Temperatura:</strong>
+                                <field name="iot_last_temp"/> °C
+                                <div class="text-muted small">
+                                    Rango permitido:
+                                    <field name="iot_temp_min"/> a
+                                    <field name="iot_temp_max"/> °C
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <strong>Combustible:</strong>
+                                <field name="iot_last_fuel"/> %
+                            </div>
+                            <div class="mb-2">
+                                <strong>GPS:</strong>
+                                <field name="iot_last_lat"/>,
+                                <field name="iot_last_long"/>
+                            </div>
+                            <div class="text-muted small">
+                                Ultima lectura:
+                                <field name="iot_last_datetime"/>
+                            </div>
+                        </div>
+
+                        <div t-else="" class="text-muted">
+                            No existen mediciones para este vehiculo.
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_vehicle_monitoring_search" model="ir.ui.view">
+        <field name="name">fleet.vehicle.monitoring.search</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="display_name"/>
+                <filter name="con_temperatura"
+                        string="Con temperatura"
+                        domain="[('iot_temp_monitor_enabled', '=', True)]"/>
+                <filter name="sin_temperatura"
+                        string="Sin temperatura"
+                        domain="[('iot_temp_monitor_enabled', '=', False)]"/>
+                <filter name="con_alerta_termica"
+                        string="Con alerta termica"
+                        domain="[('iot_current_thermal_alert', '=', True)]"/>
+                <filter name="con_alerta_termica"
+                        string="Con alerta termica"
+                        domain="[('iot_current_thermal_alert', '=', True)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_vehicle_iot_dashboard" model="ir.actions.act_window">
+        <field name="name">Estado de Flota</field>
+        <field name="res_model">fleet.vehicle</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="view_vehicle_iot_kanban"/>
+        <field name="search_view_id"
+               ref="view_vehicle_monitoring_search"/>
+        <field name="domain">
+            [('iot_monitor_enabled', '=', True)]
+        </field>
+    </record>
+
+    <menuitem id="menu_vehicle_iot_dashboard"
+              name="Estado de Flota"
+              parent="fleet.fleet_vehicles"
+              action="action_vehicle_iot_dashboard"
+              groups="fleet.fleet_group_user"
+              sequence="29"/>
+
+</odoo>
